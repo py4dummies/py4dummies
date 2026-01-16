@@ -6,7 +6,8 @@ Holds the RBXGroup class.
 """
 
 from .RBXUser import RBXUser
-from ..filterable.FilterableList import FilterableList
+from ..bufferable.BufferableList import BufferableList
+from ...utils import *
 
 class RBXGroup:
     """
@@ -48,12 +49,24 @@ class RBXGroup:
         return self._owner
     
     @property
-    def members(self) -> FilterableList[RBXUser]:
+    def members(self) -> BufferableList[RBXUser]:
         """
         A FilterableList of all members of the group.
         """
 
-        return FilterableList(self._members)
+        def member_fetch(page: int) -> list[RBXUser]:
+            endpoint = f"https://groups.roblox.com/v1/groups/{self.id}/users?sortOrder=Asc&limit=100&Cursor={page}"
+            api_data = fetch_dict(endpoint)
+
+            items = []
+
+            for user in api_data["data"]:
+                items.append(RBXUser(user["user"], True))
+
+            return items
+
+
+        return BufferableList[RBXUser](member_fetch, 100)
     
     @property
     def member_count(self) -> int:

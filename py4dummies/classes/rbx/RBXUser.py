@@ -9,35 +9,23 @@ from .RBXAccessory import RBXAccessory
 from ..filterable.FilterableList import FilterableList
 from ...utils import *
 
-_ournone = None
-
 class RBXUser:
     """
     A Roblox user.
     """
 
+    # Internal
     _id = 1
 
     _display_name = "Roblox"
     _user_name = "Roblox"
-
     _bio = ""
 
-    _is_banned = False
+    _partial_reference = False
 
     _friends: list[RBXUser] = [ ]
-    _friend_ids: list[int] = []
 
-    @staticmethod
-    def __createnone() -> RBXUser:
-        nan = RBXUser({"nan": True})
-
-        nan._display_name = "John Doe"
-        nan._user_name = "John Doe"
-
-        _ournone = nan
-        return nan
-
+    # Public
     @staticmethod
     def none() -> RBXUser:
         """
@@ -46,7 +34,12 @@ class RBXUser:
         of None avaliable.
         """
 
-        return _ournone if _ournone != None else RBXUser.__createnone()
+        nan = RBXUser({"nan": True}, True)
+
+        nan._display_name = "John Doe"
+        nan._user_name = "John Doe"
+
+        return nan
 
     @property
     def id(self) -> int:
@@ -84,6 +77,10 @@ class RBXUser:
         """
         All accessories currently worn by this user.
         """
+
+        if self._partial_reference:
+            self.complete_load()
+        
         return FilterableList[RBXAccessory]()
 
     @property
@@ -91,6 +88,10 @@ class RBXUser:
         """
         All accessories owned by this user.
         """
+
+        if self._partial_reference:
+            self.complete_load()
+
         return FilterableList[RBXAccessory]()
     
     @property
@@ -98,6 +99,10 @@ class RBXUser:
         """
         All users friended to this user.
         """
+
+        if self._partial_reference:
+            self.complete_load()
+
         return FilterableList[RBXUser](self._friends)
 
     def __eq__(self, other):
@@ -115,11 +120,34 @@ class RBXUser:
         user = RBXUser(fetch_dict(f"https://users.roblox.com/v1/users/{id}"))
         
         return user
+
+    def complete_load(self):
+        """
+        Exits the RBXUser out of partial reference mode and loads all avaliable data.
+        """
+
+        self.load_friends()
+
+        self._partial_reference = False
+
+    def load_friends(self):
+        """
+        Loads all friends of the user, replacing any old data.
+        """
+
+        friends_api_data = fetch_dict(f"https://friends.roblox.com/v1/users/{self.id}/friends")
+
+        for friend_api_data in friends_api_data["data"]:
+            self._friends.append(RBXUser(friend_api_data, True))
     
-    def __init__(self, data: dict, wasCreatedFromFriends = False):
+    def __init__(self, data: dict, partial_reference = False):
         """
         Create a new instance of RBXUser with the raw API data.
         To get a RBXUser from their player ID, use RBXUser.from_id().
+
+        Arguments:
+            `data` (dict): The raw API data.
+            `partial_reference` (bool): If True, will only partially load the profile to save memory.
         """
 
         if "nan" in data:
@@ -130,11 +158,9 @@ class RBXUser:
         self._display_name = data["displayName"]
         self._user_name = data["name"]
 
-        if wasCreatedFromFriends:
+        if partial_reference:
+            self._partial_reference = True
             return
-
-        friends_api_data = fetch_dict(f"https://friends.roblox.com/v1/users/{self.id}/friends")
-
-        for friend_api_data in friends_api_data["data"]:
-            self._friends.append(RBXUser(friend_api_data, True))
+        
+        self.load_friends()
         
