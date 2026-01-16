@@ -16,21 +16,18 @@ if len(args) < 2:
     exit(0)
 
 ### SCRIPT START
-import asyncio
 from py4dummies import *
 from py4dummies.utils import *
-from py4dummies.classes import *
 
 group_id = to_int(args[1], "group_id")
 output_filename = args[2] if len(args) > 2 else f"group-{group_id}.txt"
 
 with open(output_filename, "a") as file:
-    def output_member(member: RBXUser):
-        fmt = f"{member.display_name} (@{member.user_name}) - {member.url}"
+    def output_member(member: FilterableItem[RBXUser]):
+        fmt = f"{member.value.display_name} (@{member.value.user_name}) - {member.value.url}"
         print(fmt)
         file.writelines(fmt)
 
     group = RBXGroup(group_id)
-
-    asyncio.run(group.each_member(output_member, 25))
+    group.members.pass_through(output_member)
 ### SCRIPT END

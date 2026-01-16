@@ -6,16 +6,23 @@ Py4Dummies simplifies interactions between your Python script and Roblox
 APIs, web content, and other topics that are worth simplifying.
 """
 
-from .classes import RBXAccessory, RBXGroup, RBXUser
+from .classes.rbx.RBXAccessory import RBXAccessory
+from .classes.rbx.RBXGroup import RBXGroup
+from .classes.rbx.RBXUser import RBXUser
+from .classes.rbx.RBXGame import RBXGame
+
+from .classes.filterable.FilterableList import FilterableList
+from .classes.filterable.FilterableItem import FilterableItem
+
 from .utils import fetch, conversions
 from .connection import can_reach_url, can_connect
 
 __all__ = [
     # classes
-    "RBXAccessory", "RBXGroup", "RBXUser",
+    "RBXAccessory", "RBXGroup", "RBXUser", "RBXGame",
+    "FilterableItem", "FilterableList",
 
     # namespaces
-    "classes",
     "fetch",
     "conversions",
 
