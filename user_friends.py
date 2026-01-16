@@ -25,12 +25,11 @@ user_id = to_int(args[1], "user_id")
 output_filename = args[2] if len(args) > 2 else f"friends-{user_id}.txt"
 
 with open(output_filename, "a") as file:
-    def output_member(member: RBXUser):
-        fmt = f"{member.display_name} (@{member.user_name}) - {member.url}"
+    def output_member(member: FilterableItem[RBXUser]):
+        fmt = f"{member.value.display_name} (@{member.value.user_name}) - {member.value.url}"
         print(fmt)
         file.writelines(fmt)
 
     user = RBXUser(user_id)
-
-    asyncio.run(user.each_member(output_member, 25))
+    user.friends.pass_through(output_member)
 ### SCRIPT END

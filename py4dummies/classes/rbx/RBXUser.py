@@ -6,6 +6,7 @@ Holds the RBXUser class.
 """
 
 from .RBXAccessory import RBXAccessory
+from ..filterable.FilterableList import FilterableList
 
 _ournone = None
 
@@ -19,11 +20,12 @@ class RBXUser:
     _display_name = "Roblox"
     _user_name = "Roblox"
 
-    @staticmethod
-    def __createnone():
-        nan = RBXUser()
+    _friends: list[RBXUser] = [ ]
 
-        nan._id = -1
+    @staticmethod
+    def __createnone() -> RBXUser:
+        nan = RBXUser(-1)
+
         nan._display_name = "John Doe"
         nan._user_name = "John Doe"
 
@@ -31,7 +33,7 @@ class RBXUser:
         return nan
 
     @staticmethod
-    def none():
+    def none() -> RBXUser:
         """
         Represents either an unknown or non-existant player.
         RBXUser is non-nullable, however, this is the best representation
@@ -72,21 +74,35 @@ class RBXUser:
         return f"https://www.roblox.com/users/{self.id}" if self.id != -1 else "about:blank"
     
     @property
-    def avatar_items(self) -> list[RBXAccessory]:
+    def avatar_items(self) -> FilterableList[RBXAccessory]:
         """
-        All accessories currently worn by the user.
+        All accessories currently worn by this user.
         """
-        return [ ]
+        return FilterableList[RBXAccessory]()
 
     @property
-    def inventory(self) -> list[RBXAccessory]:
+    def inventory(self) -> FilterableList[RBXAccessory]:
         """
-        All accessories owned by the user.
+        All accessories owned by this user.
         """
-        return [ ]
+        return FilterableList[RBXAccessory]()
+    
+    @property
+    def friends(self) -> FilterableList[RBXUser]:
+        """
+        All users friended to this user.
+        """
+        return FilterableList[RBXUser](self._friends)
 
     def __eq__(self, other):
         """
         Determines if RBXUser is equal to the other by matching their user ID.
         """
         return self.id == other.id
+    
+    def __init__(self, id: int):
+        """
+        Create a new instance of RBXUser.
+        """
+
+        self._id = id
