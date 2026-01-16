@@ -7,6 +7,7 @@ Holds the RBXUser class.
 
 from .RBXAccessory import RBXAccessory
 from ..filterable.FilterableList import FilterableList
+from ...utils import *
 
 _ournone = None
 
@@ -20,11 +21,16 @@ class RBXUser:
     _display_name = "Roblox"
     _user_name = "Roblox"
 
+    _bio = ""
+
+    _is_banned = False
+
     _friends: list[RBXUser] = [ ]
+    _friend_ids: list[int] = []
 
     @staticmethod
     def __createnone() -> RBXUser:
-        nan = RBXUser(-1)
+        nan = RBXUser({"nan": True})
 
         nan._display_name = "John Doe"
         nan._user_name = "John Doe"
@@ -99,10 +105,36 @@ class RBXUser:
         Determines if RBXUser is equal to the other by matching their user ID.
         """
         return self.id == other.id
-    
-    def __init__(self, id: int):
+
+    @staticmethod
+    def from_id(id: int) -> RBXUser:
         """
-        Create a new instance of RBXUser.
+        Create a Roblox user from their Player ID.
         """
 
-        self._id = id
+        user = RBXUser(fetch_dict(f"https://users.roblox.com/v1/users/{id}"))
+        
+        return user
+    
+    def __init__(self, data: dict, wasCreatedFromFriends = False):
+        """
+        Create a new instance of RBXUser with the raw API data.
+        To get a RBXUser from their player ID, use RBXUser.from_id().
+        """
+
+        if "nan" in data:
+            return
+
+        self._id = data["id"]
+
+        self._display_name = data["displayName"]
+        self._user_name = data["name"]
+
+        if wasCreatedFromFriends:
+            return
+
+        friends_api_data = fetch_dict(f"https://friends.roblox.com/v1/users/{self.id}/friends")
+
+        for friend_api_data in friends_api_data["data"]:
+            self._friends.append(RBXUser(friend_api_data, True))
+        
