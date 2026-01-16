@@ -1,0 +1,13 @@
+name: Close Pull Request
+
+on:
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: superbrothers/close-pull-request@v3
+      with:
+        comment: "Hello! Thanks for your interest in contributing to Py4Dummies.\n\nDevelopment of Py4Dummies does not happen on GitHub due to the nature of the content it's made for. However, you can send a pull request to our upstream repository: https://git.bendaws.net/py4dummies/py4dummies\n\nThank you!"
