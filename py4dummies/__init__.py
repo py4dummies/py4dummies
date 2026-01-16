@@ -8,5 +8,17 @@ APIs, web content, and other topics that are worth simplifying.
 
 from .classes import RBXAccessory, RBXGroup, RBXUser
 from .utils import fetch, conversions
+from .connection import can_reach_url, can_connect
 
-__all__ = ["RBXAccessory", "RBXGroup", "RBXUser", "fetch", "conversions"]
+__all__ = [
+    # classes
+    "RBXAccessory", "RBXGroup", "RBXUser",
+
+    # namespaces
+    "classes",
+    "fetch",
+    "conversions",
+
+    # functions
+    "can_reach_url", "can_connect" # connection.py
+]
