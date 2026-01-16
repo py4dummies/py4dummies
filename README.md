@@ -2,7 +2,7 @@
 This is meant to help expand the efficiency of developing scripts for Moderation For Dummies.
 It includes `py4dummies` (which the repository is named after), a util library for interfacing with the Roblox API, fetching internet content, and other utilities to help with Mod4Dummie's daily activities.
 
-The canonical git repository is located at https://git.bendaws.net/py4dummies/py4dummies, with a mirror avaliable at https://github.com/sirkingbinx/py4dummies.
+The canonical git repository is located at https://git.bendaws.net/py4dummies/py4dummies, with a mirror avaliable at https://github.com/py4dummies/py4dummies.
 
 ## Scripts
 ### Usage
