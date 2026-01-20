@@ -1,4 +1,8 @@
 # Py4Dummies
+
+> [!NOTE]
+> This is still **beta** software, not yet meant for real usage, and very, very much in early development.
+
 This is meant to help expand the efficiency of developing scripts for Moderation For Dummies.
 It includes `py4dummies` (which the repository is named after), a util library for interfacing with the Roblox API, fetching internet content, and other utilities to help with Mod4Dummie's daily activities.
 
